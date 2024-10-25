@@ -10,10 +10,11 @@ async function addFav(req, res) {
   const type = req.body.type;
   const url = req.body.url;
 
-  if (type !== "movie" || type !== "character") {
-    throw new Error(
-      '"type" should be either "movie" or "character"'
-    );
+  if (type !== "movie" && type !== "character") {
+    return res.status(400).json({
+      message:
+        '"type" should be either "movie" or "character"',
+    });
   }
 
   const isAvailable = await Favorite.findOne({
@@ -24,7 +25,7 @@ async function addFav(req, res) {
   });
 
   if (isAvailable) {
-    res
+    return res
       .status(401)
       .json({ message: "Favorite already exists" });
   }
@@ -44,7 +45,7 @@ async function addFav(req, res) {
 }
 
 async function updateFav(req, res) {
-  id = req.params.id;
+  const id = req.params.id;
 
   const favorite = await Favorite.findByPk(id);
   if (!favorite) {
